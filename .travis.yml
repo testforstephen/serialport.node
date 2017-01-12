@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+  - "6.9"
+
+os:
+  - linux
+  - osx
+
+before_install:
+  - npm install -g vsce
+  - npm install -g gulp
+
+install:
+  - npm install
+
+script:
+  - gulp buildSerialPortLib
