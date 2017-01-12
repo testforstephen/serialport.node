@@ -6,7 +6,10 @@ os:
   - linux
 
 before_install:
+  - sudo apt-get update
+  - sudo apt-get install g++-multilib
   - npm install -g vsce
+  - npm install -g node_gyp
   - npm install -g gulp
 
 install:
