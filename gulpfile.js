@@ -42,7 +42,11 @@ gulp.task('buildSerialPortLib', (done) => {
         (callback) => {
             const tmpDir = path.normalize('./tmp');
             if (fs.existsSync(tmpDir)) {
-                rm('-rf', tmpDir);
+                if (process.platform === 'win32') {
+                    rm('-rf', tmpDir);
+                } else {
+                    exec(`sudo rm -rf ${tmpDir}`);
+                }
             }
             mkdir('-p', tmpDir);
             const gitClone = exec(`git clone https://github.com/EmergingTechnologyAdvisors/node-serialport.git serialport`, {
