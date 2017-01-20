@@ -39,35 +39,36 @@ gulp.task('buildDll', (done) => {
                 archs.forEach((arch) => {
                     tasks.push((callback) => {
                         console.log(`[node-gyp] Starting to build the binary version for electron ${electron} and arch ${arch}.`);
-                        if (platform === 'win32') {
-                            const compile = exec(`node-gyp rebuild --target=${electron} --arch=${arch} --dist-url=https://atom.io/download/electron`, {
-                                cwd: path.normalize('./tmp/serialport/vendor/serialport-native')
-                            });
-                            if (compile.code) {
-                                callback('[node-gyp] Compiling serial port native code failed.');
-                            } else {
-                                console.log('[node-gyp] Build complete.');
-                                console.log(`Generate dll at ${path.normalize('./tmp/serialport/build/Release/serialport.node')}`);
-                                callback();
-                                // console.log('[azure-blob] Starting to upload build package to azure blob.');
-                                // uploadFile(path.normalize('./tmp/serialport/build/Release/serialport.node'), `serialport_${platform}_${electron}_${arch}.node`, callback);
-                                // console.log(`[azure-blob] Successfully upload binary file "serialport_${platform}_${electron}_${arch}.node" to azure blob.`);
-                            }
+                        // if (platform === 'win32') {
+                        const compile = exec(`node-gyp rebuild --target=${electron} --arch=${arch} --dist-url=https://atom.io/download/electron`, {
+                            cwd: path.normalize('./tmp/serialport/vendor/serialport-native')
+                        });
+                        if (compile.code) {
+                            callback('[node-gyp] Compiling serial port native code failed.');
                         } else {
-                            const compile = exec(`sudo node-gyp rebuild --target=${electron} --arch=${arch} --dist-url=https://atom.io/download/electron`, {
-                                cwd: path.normalize('./tmp/serialport/vendor/serialport-native')
-                            });
-                            if (compile.code) {
-                                callback('Compiling serial port native code failed.');
-                            } else {
-                                console.log('[node-gyp] Build complete.');
-                                console.log(`Generate dll at ${path.normalize('./tmp/serialport/build/Release/serialport.node')}`);
-                                callback();
-                                // console.log('[azure-blob] Starting to upload build package to azure blob.');
-                                // uploadFile(path.normalize('./tmp/serialport/build/Release/serialport.node'), `serialport_${platform}_${electron}_${arch}.node`, callback);
-                                // console.log(`[azure-blob] Successfully upload binary file "serialport_${platform}_${electron}_${arch}.node" to azure blob.`);
-                            }
+                            console.log('[node-gyp] Build complete.');
+                            console.log(`Generate dll at ${path.normalize('./tmp/serialport/build/Release/serialport.node')}`);
+                            callback();
+                            // console.log('[azure-blob] Starting to upload build package to azure blob.');
+                            // uploadFile(path.normalize('./tmp/serialport/build/Release/serialport.node'), `serialport_${platform}_${electron}_${arch}.node`, callback);
+                            // console.log(`[azure-blob] Successfully upload binary file "serialport_${platform}_${electron}_${arch}.node" to azure blob.`);
                         }
+                        // }
+                        // else {
+                        //     const compile = exec(`node-gyp rebuild --target=${electron} --arch=${arch} --dist-url=https://atom.io/download/electron`, {
+                        //         cwd: path.normalize('./tmp/serialport/vendor/serialport-native')
+                        //     });
+                        //     if (compile.code) {
+                        //         callback('Compiling serial port native code failed.');
+                        //     } else {
+                        //         console.log('[node-gyp] Build complete.');
+                        //         console.log(`Generate dll at ${path.normalize('./tmp/serialport/build/Release/serialport.node')}`);
+                        //         callback();
+                        //         // console.log('[azure-blob] Starting to upload build package to azure blob.');
+                        //         // uploadFile(path.normalize('./tmp/serialport/build/Release/serialport.node'), `serialport_${platform}_${electron}_${arch}.node`, callback);
+                        //         // console.log(`[azure-blob] Successfully upload binary file "serialport_${platform}_${electron}_${arch}.node" to azure blob.`);
+                        //     }
+                        // }
                     });
                 });
             });
