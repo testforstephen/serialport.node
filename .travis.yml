@@ -9,8 +9,8 @@ dist: trusty
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
-      sudo apt-get update
-      sudo apt-get install g++-multilib
+      sudo apt-get update;
+      sudo apt-get install g++-multilib;
     fi
   - npm install -g vsce
   - npm install -g node-gyp
