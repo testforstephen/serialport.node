@@ -7,8 +7,8 @@ os:
   - osx
 
 before_install:
-  - apt-get update
-  - apt-get install g++-multilib
+  - sudo apt-get update
+  - sudo apt-get install g++-multilib
   - npm install -g vsce
   - npm install -g node-gyp
   - npm install -g gulp
