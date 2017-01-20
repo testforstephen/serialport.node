@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const async = require('async');
 const cliArgs = require('yargs').argv;
+const linuxDistro = require('linux-distro');
 
 gulp.task('buildDll', (done) => {
     async.waterfall([
@@ -48,7 +49,19 @@ gulp.task('buildDll', (done) => {
                         } else {
                             console.log('[node-gyp] Build complete.');
                             console.log(`Generate dll at ${path.normalize('./tmp/serialport/build/Release/serialport.node')}`);
-                            callback();
+                            if (platform === 'linux') {
+                                linuxDistro().then(data => {
+                                    const packageName = `serialport_${data.os}${data.release || data.code}_${electron}_${arch}.node`;
+                                    console.log(packageName);
+                                    callback();
+                                }, () => {
+                                    const packageName = `serialport_${platform}_${electron}_${arch}.node`;
+                                    console.log(packageName);
+                                    callback();
+                                });
+                            } else {
+                                callback();
+                            }
                             // console.log('[azure-blob] Starting to upload build package to azure blob.');
                             // uploadFile(path.normalize('./tmp/serialport/build/Release/serialport.node'), `serialport_${platform}_${electron}_${arch}.node`, callback);
                             // console.log(`[azure-blob] Successfully upload binary file "serialport_${platform}_${electron}_${arch}.node" to azure blob.`);
