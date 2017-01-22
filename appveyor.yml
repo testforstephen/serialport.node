@@ -12,4 +12,5 @@ install:
   - npm install
 
 build_script:
-  - gulp buildDll --repoUrl="$REPO_URL" --token="$API_TOKEN" --tag="downloads"
+  - gulp buildDll --repoUrl="%REPO_URL%" --token="%API_TOKEN%" --tag="downloads"
+  
