@@ -11,12 +11,16 @@ const git = require('simple-git')();
 function getRepoName(gitUrl) {
     const fields = gitUrl.split(':');
     if (fields.length < 2) return '';
-    const position = fields[1].length - '.git'.length;
-    const lastIndex = fields[1].lastIndexOf('.git');
+    const segments = fields[1].split('/');
+    const userName = segments[segments.length-2];
+    const repoName = segments[segments.length-1];
+    const fullRepoName = `${userName}/${repoName}`;
+    const position = fullRepoName.length - '.git'.length;
+    const lastIndex = fullRepoName.lastIndexOf('.git');
     if (lastIndex !== -1 && lastIndex === position) {
-        return fields[1].substring(0, position);
+        return fullRepoName.substring(0, position);
     } else {
-        return fields[1];
+        return fullRepoName;
     }
 }
 
