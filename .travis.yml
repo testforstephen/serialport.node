@@ -2,6 +2,11 @@ language: node_js
 node_js:
   - "6.9"
 
+# safelist
+branches:
+  only:
+  - master
+
 os:
   - linux
   - osx
@@ -21,8 +26,3 @@ install:
 
 script:
   - gulp buildDll --repoUrl="$REPO_URL" --token="$API_TOKEN" --tag="downloads"
-
-# safelist
-branches:
-  only:
-  - master

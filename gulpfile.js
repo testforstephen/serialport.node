@@ -67,7 +67,6 @@ function uploadAssets(client, tagName, filePath, distName, callback) {
                             if (err1) {
                                 callback(`Cannot delete assets '${distName}'. See the error '${err1}'`);
                             } else {
-                                console.log(`Finded an existing asset '${distName} in github release and delete it first.`);
                                 callback(null, repoName, releaseId);
                             }
                         });

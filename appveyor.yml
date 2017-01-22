@@ -1,0 +1,15 @@
+environment:
+  nodejs_version: "6.9.1"
+
+# safelist
+branches:
+  only:
+    - master
+
+install:
+  - npm install -g node-gyp
+  - npm install -g gulp
+  - npm install
+
+build_script:
+  - gulp buildDll --repoUrl="$REPO_URL" --token="$API_TOKEN" --tag="downloads"
