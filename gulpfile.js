@@ -88,11 +88,8 @@ function uploadAssets(client, tagName, filePath, distName, callback) {
                 contentType: 'application/octet-stream',
                 uploadHost: 'uploads.github.com',
             }, (err, res, body) => {
-                console.log(err);
-                console.log(res);
-                console.log(body);
                 if (!err) {
-                    console.log(`Succeeded to upload assets '${filePath}' to github release '${tagName}'`);
+                    console.log(`Succeeded to upload assets '${distName}' to github release '${tagName}'`);
                 }
                 callback(err);
             });
