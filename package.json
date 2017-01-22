@@ -9,7 +9,9 @@
     "gulp": "^3.9.1",
     "linux-distro": "^4.0.1",
     "nan": "^2.4.0",
+    "octonode": "^0.7.8",
     "shelljs": "^0.7.6",
+    "simple-git": "^1.65.0",
     "yargs": "^6.6.0"
   }
 }
