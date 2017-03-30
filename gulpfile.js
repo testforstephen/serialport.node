@@ -137,14 +137,15 @@ gulp.task('buildDll', (done) => {
             const tasks = [];
             electrons.forEach((electron) => {
                 archs.forEach((arch) => {
+                    // Compile serialport native code.
                     tasks.push((callback) => {
-                        console.log(`[node-gyp] Starting to build the binary version for electron ${electron} and arch ${arch}.`);
+                        console.log(`[node-gyp] Starting to build serialport binary version for electron ${electron} and arch ${arch}.`);
                         // if (platform === 'win32') {
                         const compile = exec(`node-gyp rebuild --target=${electron} --arch=${arch} --dist-url=https://atom.io/download/electron`, {
                             cwd: path.normalize('./tmp/serialport/vendor/serialport-native')
                         });
                         if (compile.code) {
-                            callback('[node-gyp] Compiling serial port native code failed.');
+                            callback('[node-gyp] Compiling serialport native code failed.');
                         } else {
                             console.log('[node-gyp] Build complete.');
                             console.log(`Generate dll at ${path.normalize('./tmp/serialport/vendor/serialport-native/build/Release/serialport-native.node')}`);
@@ -183,6 +184,35 @@ gulp.task('buildDll', (done) => {
                         //         // console.log(`[azure-blob] Successfully upload binary file "serialport_${platform}_${electron}_${arch}.node" to azure blob.`);
                         //     }
                         // }
+                    });
+
+                    // Compile node-usb-detection native code.
+                    tasks.push((callback) => {
+                        console.log(`[node-gyp] Starting to build node-usb-detection binary version for electron ${electron} and arch ${arch}.`);
+                        const compile = exec(`node-gyp rebuild --target=${electron} --arch=${arch} --dist-url=https://atom.io/download/electron`, {
+                            cwd: path.normalize('./tmp/serialport/vendor/node-usb-detection')
+                        });
+                        if (compile.code) {
+                            callback('[node-gyp] Compiling node-usb-detection native code failed.');
+                        } else {
+                            console.log('[node-gyp] Build complete.');
+                            console.log(`Generate dll at ${path.normalize('./tmp/serialport/vendor/node-usb-detection/build/Release/detection.node')}`);
+                            if (platform === 'linux') {
+                                linuxDistro().then(data => {
+                                    const packageName = `detection_${data.os}${data.release || data.code}_${electron}_${arch}.node`;
+                                    console.log(packageName);
+                                    uploadAssets(client, tagName, path.normalize('./tmp/serialport/vendor/node-usb-detection/build/Release/detection.node'), packageName, callback);
+                                }, () => {
+                                    const packageName = `detection_${platform}_${electron}_${arch}.node`;
+                                    console.log(packageName);
+                                    uploadAssets(client, tagName, path.normalize('./tmp/serialport/vendor/node-usb-detection/build/Release/detection.node'), packageName, callback);
+                                });
+                            } else {
+                                const packageName = `detection_${platform}_${electron}_${arch}.node`;
+                                console.log(packageName);
+                                uploadAssets(client, tagName, path.normalize('./tmp/serialport/vendor/node-usb-detection/build/Release/detection.node'), packageName, callback);
+                            }
+                        }
                     });
                 });
             });
