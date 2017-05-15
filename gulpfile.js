@@ -107,7 +107,7 @@ gulp.task('buildDll', (done) => {
     const tagName = cliArgs.tag;
 
     async.waterfall([
-        // Pulling serial port package source code from GITHUB.
+        // Pulling package source code from GITHUB.
         (callback) => {
             const tmpDir = path.normalize('./tmp');
             if (fs.existsSync(tmpDir)) {
@@ -118,11 +118,11 @@ gulp.task('buildDll', (done) => {
                 }
             }
             mkdir('-p', tmpDir);
-            const gitClone = exec(`git clone ${decodeURIComponent(cliArgs.repoUrl)} serialport`, {
+            const gitClone = exec(`git clone -b andy_native_1 ${decodeURIComponent(cliArgs.repoUrl)} usb-native`, {
                 cwd: tmpDir
             });
             if (gitClone.code) {
-                callback('Pulling serial port node package failed.');
+                callback('Pulling node package failed.');
             } else {
                 callback();
             }
@@ -137,80 +137,31 @@ gulp.task('buildDll', (done) => {
             const tasks = [];
             electrons.forEach((electron) => {
                 archs.forEach((arch) => {
-                    // Compile serialport native code.
+                    // Compile node-usb-native native code.
                     tasks.push((callback) => {
-                        console.log(`[node-gyp] Starting to build serialport binary version for electron ${electron} and arch ${arch}.`);
-                        // if (platform === 'win32') {
+                        console.log(`[node-gyp] Starting to build node-usb-usb binary version for electron ${electron} and arch ${arch}.`);
                         const compile = exec(`node-gyp rebuild --target=${electron} --arch=${arch} --dist-url=https://atom.io/download/electron`, {
-                            cwd: path.normalize('./tmp/serialport/vendor/serialport-native')
+                            cwd: path.normalize('./tmp/usb-native/vendor/node-usb-native')
                         });
                         if (compile.code) {
-                            callback('[node-gyp] Compiling serialport native code failed.');
+                            callback('[node-gyp] Compiling node-usb-native native code failed.');
                         } else {
                             console.log('[node-gyp] Build complete.');
-                            console.log(`Generate dll at ${path.normalize('./tmp/serialport/vendor/serialport-native/build/Release/serialport-native.node')}`);
+                            console.log(`Generate dll at ${path.normalize('./tmp/usb-native/vendor/node-usb-native/build/Release/usb-native.node')}`);
                             if (platform === 'linux') {
                                 linuxDistro().then(data => {
-                                    const packageName = `serialport_${data.os}${data.release || data.code}_${electron}_${arch}.node`;
+                                    const packageName = `usb-native_${data.os}${data.release || data.code}_${electron}_${arch}.node`;
                                     console.log(packageName);
-                                    uploadAssets(client, tagName, path.normalize('./tmp/serialport/vendor/serialport-native/build/Release/serialport-native.node'), packageName, callback);
+                                    uploadAssets(client, tagName, path.normalize('./tmp/usb-native/vendor/node-usb-native/build/Release/usb-native.node'), packageName, callback);
                                 }, () => {
-                                    const packageName = `serialport_${platform}_${electron}_${arch}.node`;
+                                    const packageName = `usb-native_${platform}_${electron}_${arch}.node`;
                                     console.log(packageName);
-                                    uploadAssets(client, tagName, path.normalize('./tmp/serialport/vendor/serialport-native/build/Release/serialport-native.node'), packageName, callback);
+                                    uploadAssets(client, tagName, path.normalize('./tmp/usb-native/vendor/node-usb-native/build/Release/usb-native.node'), packageName, callback);
                                 });
                             } else {
-                                const packageName = `serialport_${platform}_${electron}_${arch}.node`;
+                                const packageName = `usb-native_${platform}_${electron}_${arch}.node`;
                                 console.log(packageName);
-                                uploadAssets(client, tagName, path.normalize('./tmp/serialport/vendor/serialport-native/build/Release/serialport-native.node'), packageName, callback);
-                            }
-                            // console.log('[azure-blob] Starting to upload build package to azure blob.');
-                            // uploadFile(path.normalize('./tmp/serialport/build/Release/serialport.node'), `serialport_${platform}_${electron}_${arch}.node`, callback);
-                            // console.log(`[azure-blob] Successfully upload binary file "serialport_${platform}_${electron}_${arch}.node" to azure blob.`);
-                        }
-                        // }
-                        // else {
-                        //     const compile = exec(`node-gyp rebuild --target=${electron} --arch=${arch} --dist-url=https://atom.io/download/electron`, {
-                        //         cwd: path.normalize('./tmp/serialport/vendor/serialport-native')
-                        //     });
-                        //     if (compile.code) {
-                        //         callback('Compiling serial port native code failed.');
-                        //     } else {
-                        //         console.log('[node-gyp] Build complete.');
-                        //         console.log(`Generate dll at ${path.normalize('./tmp/serialport/build/Release/serialport.node')}`);
-                        //         callback();
-                        //         // console.log('[azure-blob] Starting to upload build package to azure blob.');
-                        //         // uploadFile(path.normalize('./tmp/serialport/build/Release/serialport.node'), `serialport_${platform}_${electron}_${arch}.node`, callback);
-                        //         // console.log(`[azure-blob] Successfully upload binary file "serialport_${platform}_${electron}_${arch}.node" to azure blob.`);
-                        //     }
-                        // }
-                    });
-
-                    // Compile node-usb-detection native code.
-                    tasks.push((callback) => {
-                        console.log(`[node-gyp] Starting to build node-usb-detection binary version for electron ${electron} and arch ${arch}.`);
-                        const compile = exec(`node-gyp rebuild --target=${electron} --arch=${arch} --dist-url=https://atom.io/download/electron`, {
-                            cwd: path.normalize('./tmp/serialport/vendor/node-usb-detection')
-                        });
-                        if (compile.code) {
-                            callback('[node-gyp] Compiling node-usb-detection native code failed.');
-                        } else {
-                            console.log('[node-gyp] Build complete.');
-                            console.log(`Generate dll at ${path.normalize('./tmp/serialport/vendor/node-usb-detection/build/Release/detection.node')}`);
-                            if (platform === 'linux') {
-                                linuxDistro().then(data => {
-                                    const packageName = `detection_${data.os}${data.release || data.code}_${electron}_${arch}.node`;
-                                    console.log(packageName);
-                                    uploadAssets(client, tagName, path.normalize('./tmp/serialport/vendor/node-usb-detection/build/Release/detection.node'), packageName, callback);
-                                }, () => {
-                                    const packageName = `detection_${platform}_${electron}_${arch}.node`;
-                                    console.log(packageName);
-                                    uploadAssets(client, tagName, path.normalize('./tmp/serialport/vendor/node-usb-detection/build/Release/detection.node'), packageName, callback);
-                                });
-                            } else {
-                                const packageName = `detection_${platform}_${electron}_${arch}.node`;
-                                console.log(packageName);
-                                uploadAssets(client, tagName, path.normalize('./tmp/serialport/vendor/node-usb-detection/build/Release/detection.node'), packageName, callback);
+                                uploadAssets(client, tagName, path.normalize('./tmp/usb-native/vendor/node-usb-native/build/Release/usb-native.node'), packageName, callback);
                             }
                         }
                     });
