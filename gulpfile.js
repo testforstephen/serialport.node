@@ -118,7 +118,7 @@ gulp.task('buildDll', (done) => {
                 }
             }
             mkdir('-p', tmpDir);
-            const gitClone = exec(`git clone -b andy_native_1 ${decodeURIComponent(cliArgs.repoUrl)} usb-native`, {
+            const gitClone = exec(`git clone -b master ${decodeURIComponent(cliArgs.repoUrl)} usb-native`, {
                 cwd: tmpDir
             });
             if (gitClone.code) {
